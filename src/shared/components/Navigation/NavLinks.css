@@ -22,7 +22,6 @@
   }
   
   .nav-links a:hover,
-  .nav-links a:active,
   .nav-links a.active {
     background: #1C9C9C;
     border-color: #95C8C1;

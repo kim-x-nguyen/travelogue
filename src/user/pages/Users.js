@@ -8,13 +8,13 @@ const Users = () => {
             id: 'u1',
             name: 'Kim Nguyen',
             image: 'https://i.pinimg.com/originals/2c/5a/57/2c5a57f4562aff17b9c2142b4b1453e1.gif',
-            places: 3
+            places: 1
         },
         {
             id: 'u2',
             name: 'Vu Nguyen',
             image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa9hmjQbwTeGgtB_smMXHbZPvaIwRx10YxmzKmgpIBRHL5j0ZiTeNk7BDgJD2yHBqxotY&usqp=CAU',
-            places: 2
+            places: 1
         },
         {
             id: 'u3',
