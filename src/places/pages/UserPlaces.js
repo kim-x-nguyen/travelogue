@@ -12,7 +12,7 @@ const DUMMY_PLACES = [
         address: 'Tucson, Arizona',
         location: {
             lat: 32.1700392,
-            long: -110.8601235
+            lng: -110.8601235
         },
         creator: 'u1'
     },
@@ -24,7 +24,7 @@ const DUMMY_PLACES = [
         address: 'Red Sea Governorate, Egypt',
         location: {
             lat: 27.3804303,
-            long: 33.6299342
+            lng: 33.6299342
         },
         creator: 'u2'
     },
@@ -36,7 +36,7 @@ const DUMMY_PLACES = [
         address: 'Schansdijk 5, 4655 De Heen, The Netherlands',
         location: {
             lat: 53.0067437,
-            long: 7.1898471
+            lng: 7.1898471
         },
         creator: 'u3'
     },
