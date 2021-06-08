@@ -1,16 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 
 import NewPlaces from './places/pages/NewPlace';
 import Users from './user/pages/Users';
 import UserPlaces from './places/pages/UserPlaces';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
+import UpdatePlace from './places/pages/UpdatePlace';
+import Auth from './user/pages/Auth';
+import { AuthContext } from './shared/context/auth-context';
 
 
 
 
 function App() {
   const { REACT_APP_API_KEY } = process.env;
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   useEffect(() => {
     // Create the script tag, set the appropriate attributes
     const script = document.createElement('script');
@@ -19,16 +25,24 @@ function App() {
     // Append the 'script' element to 'head'
     document.head.appendChild(script);
 
-    return() => {
+    return () => {
       document.head.removeChild(script);
     }
 
   }, []);
 
+  const login = useCallback(() => {
+    setIsLoggedIn(true);
+  }, []);
 
-  return (<Router>
-    <MainNavigation />
-    <main>
+  const logout = useCallback(() => {
+    setIsLoggedIn(false);
+  }, []);
+
+  let routes;
+
+  if (isLoggedIn) {
+    routes = (
       <Switch>
         <Route path="/" exact>
           <Users />
@@ -39,10 +53,44 @@ function App() {
         <Route path="/places/new" exact>
           <NewPlaces />
         </Route>
+        <Route path="/places/:placeId/">
+          <UpdatePlace />
+        </Route>
         <Redirect to='/' />
+      </Switch>);
+  } else {
+    routes = (
+      <Switch>
+        <Route path="/" exact>
+          <Users />
+        </Route>
+        <Route path="/:userId/places" exact>
+          <UserPlaces />
+        </Route>
+        <Route path="/auth">
+          <Auth />
+        </Route>
+        <Redirect to='/auth' />
       </Switch>
-    </main>
-  </Router>);
+    );
+  }
+
+  return (
+    <AuthContext.Provider value={
+      {
+        isLoggedIn: isLoggedIn,
+        login: login,
+        logout: logout
+      }
+    }>
+      <Router>
+        <MainNavigation />
+        <main>
+          {routes}
+        </main>
+      </Router>
+    </AuthContext.Provider>
+  );
 }
 
 export default App;

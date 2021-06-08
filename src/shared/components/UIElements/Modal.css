@@ -5,14 +5,14 @@
     left: 10%;
     width: 80%;
     background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+    box-shadow: 0 2px 8px #335376;
     border-radius: 8px;
   }
   
   .modal__header {
     width: 100%;
     padding: 1rem 0.5rem;
-    background: #2a006e;
+    background: #335376;
     color: white;
   }
   
