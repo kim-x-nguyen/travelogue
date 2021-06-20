@@ -1,30 +1,48 @@
-import React from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 
 import UserList from '../components/UserList';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 
 const Users = () => {
-    const USERS = [
-        {
-            id: 'u1',
-            name: 'Kim Nguyen',
-            image: 'https://i.pinimg.com/originals/2c/5a/57/2c5a57f4562aff17b9c2142b4b1453e1.gif',
-            places: 1
-        },
-        {
-            id: 'u2',
-            name: 'Vu Nguyen',
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa9hmjQbwTeGgtB_smMXHbZPvaIwRx10YxmzKmgpIBRHL5j0ZiTeNk7BDgJD2yHBqxotY&usqp=CAU',
-            places: 1
-        },
-        {
-            id: 'u3',
-            name: 'Duc Nguyen',
-            image: 'https://img.freepik.com/free-vector/pixel-art-cartoon-boy-character-wearing-mask-brown-scarf_41992-1279.jpg?size=338&ext=jpg',
-            places: 1
-        }
-    ];
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState();
+    const [loadedUsers, setLoadedUsers] = useState();
 
-    return <UserList items={USERS} />
+    useEffect(() => {
+        const sendRequest = async () => {
+            setIsLoading(true);
+            try {
+                const response = await fetch('http://localhost:5000/api/users');
+
+                const responseData = await response.json();
+                if (!response.ok) {
+                    throw new Error(responseData.message);
+                }
+                setLoadedUsers(responseData.users);
+            } catch (err) {
+                setError(err.message);
+            }
+            setIsLoading(false);
+        }
+        sendRequest();
+
+    }, []);
+
+    const errorHandler = () => {
+        setError(null);
+    }
+
+    return <Fragment>
+        <ErrorModal error={error} onClear={errorHandler} />
+        {isLoading && (
+            <div className='center'>
+                <LoadingSpinner />
+            </div>
+        )}
+        {!isLoading && loadedUsers && <UserList items={loadedUsers} />}
+    </Fragment>
+
 };
 
 export default Users;
