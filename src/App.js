@@ -16,6 +16,7 @@ function App() {
   const { REACT_APP_API_KEY } = process.env;
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState(false);
 
   useEffect(() => {
     // Create the script tag, set the appropriate attributes
@@ -31,12 +32,14 @@ function App() {
 
   }, []);
 
-  const login = useCallback(() => {
+  const login = useCallback(uid => {
     setIsLoggedIn(true);
+    setUserId(uid);
   }, []);
 
   const logout = useCallback(() => {
     setIsLoggedIn(false);
+    setUserId(null);
   }, []);
 
   let routes;
@@ -79,6 +82,7 @@ function App() {
     <AuthContext.Provider value={
       {
         isLoggedIn: isLoggedIn,
+        userId: userId,
         login: login,
         logout: logout
       }

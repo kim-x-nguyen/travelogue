@@ -1,4 +1,5 @@
 import React, { useState, useContext, Fragment } from 'react';
+
 import Card from '../../shared/components/UIElements/Card';
 import { useForm } from '../../shared/hooks/form-hook';
 import { useHttpClient } from '../../shared/hooks/http-hook';
@@ -62,8 +63,8 @@ const Auth = props => {
                         password: formState.inputs.password.value
                     })
                 );
-                console.log(responseData);
-                auth.login();
+                console.log(responseData.user.id);
+                auth.login(responseData.user.id);
             } catch (err) {
                 console.log(err);
             }
@@ -80,8 +81,8 @@ const Auth = props => {
                         password: formState.inputs.password.value
                     })
                 );
-                console.log(responseData);
-                auth.login();
+                console.log(responseData.user.id);
+                auth.login(responseData.user.id);
             } catch (err) {
                 console.log(err);
             }
