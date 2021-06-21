@@ -37,7 +37,7 @@ const UpdatePlace = () => {
             try {
                 const responseData = await sendRequest(`http://localhost:5000/api/places/${placeId}`);
                 setLoadedPlace(responseData.place);
-                console.log(responseData);
+                console.log(responseData.message);
                 setFormData({
                     title: {
                         value: responseData.place.title,
@@ -118,7 +118,7 @@ const UpdatePlace = () => {
             />
             <div className="place-form__actions">
                 <Button type="submit" disabled={!formState.isValid}>UPDATE PLACE</Button>
-                {/* <Button to={`/${userId}/places`}>Cancel</Button> */}
+                <Button type="button" to={`/${auth.userId}/places`}>Cancel</Button>
             </div>
         </form>}
     </Fragment>)

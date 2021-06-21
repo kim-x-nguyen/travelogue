@@ -7,6 +7,7 @@ import Button from '../../shared/components/FormElements/Button';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 import Input from '../../shared/components/FormElements/Input';
+import ImageUpload from '../../shared/components/FormElements/imageUpload';
 import { VALIDATOR_EMAIL, VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE } from '../../shared/util/validators';
 import { AuthContext } from '../../shared/context/auth-context';
 import './Auth.css';
@@ -34,13 +35,17 @@ const Auth = props => {
         if (!isLoginMode) {
             setFormData({
                 ...formState.inputs,
-                name: undefined
+                name: undefined,
+                image: undefined
             }, formState.inputs.email.isValid && formState.inputs.password.isValid);
         } else {
             setFormData({
                 ...formState.inputs,
                 name: {
                     value: '',
+                    isValid: false
+                }, image: {
+                    value: null,
                     isValid: false
                 }
             }, false);
@@ -50,7 +55,7 @@ const Auth = props => {
 
     const authSubmitHandler = async event => {
         event.preventDefault();
-       
+        
         if (isLoginMode) {
             try {
 
@@ -63,25 +68,19 @@ const Auth = props => {
                         password: formState.inputs.password.value
                     })
                 );
-                console.log(responseData.user.id);
                 auth.login(responseData.user.id);
             } catch (err) {
                 console.log(err);
             }
         } else {
             try {
-                const responseData = await sendRequest('http://localhost:5000/api/users/signup',
-                    'POST',
-                    {
-                        'Content-Type': 'application/json'
-                    },
-                    JSON.stringify({
-                        name: formState.inputs.name.value,
-                        email: formState.inputs.email.value,
-                        password: formState.inputs.password.value
-                    })
+                const formData = new FormData();
+                formData.append('name', formState.inputs.name.value);
+                formData.append('email', formState.inputs.email.value);
+                formData.append('password', formState.inputs.password.value);
+                formData.append('image', formState.inputs.image.value)
+                const responseData = await sendRequest('http://localhost:5000/api/users/signup', 'POST', {}, formData
                 );
-                console.log(responseData.user.id);
                 auth.login(responseData.user.id);
             } catch (err) {
                 console.log(err);
@@ -96,6 +95,7 @@ const Auth = props => {
             {isLoading && <LoadingSpinner asOverlay />}
             <h2>Login Required</h2>
             <form onSubmit={authSubmitHandler}>
+                {!isLoginMode && <ImageUpload center id="image" onInput={inputHandler} errorText="Please provide an image."/>}
                 {!isLoginMode && <Input
                     element="input"
                     id="name"
@@ -105,6 +105,7 @@ const Auth = props => {
                     errorText="Please enter a valid name."
                     onInput={inputHandler}
                 />}
+
                 <Input
                     id="email"
                     element="input"
