@@ -120,8 +120,8 @@ const Auth = props => {
                     element="input"
                     type="password"
                     label="password"
-                    validators={[VALIDATOR_MINLENGTH(5)]}
-                    errorText="Please enter a valid password (at least 5 characters)."
+                    validators={[VALIDATOR_MINLENGTH(6)]}
+                    errorText="Please enter a valid password (at least 6 characters)."
                     onInput={inputHandler}
 
                 />

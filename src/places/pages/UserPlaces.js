@@ -22,14 +22,18 @@ const UserPlaces = () => {
             }
         };
         fetchPlaces();
-    }, [sendRequest, userId])
+    }, [sendRequest, userId]);
+
+    const placeDeteleHandler = (deteledPlaceId) => {
+        setLoadedPlaces(prev => prev.filter(place => place.id !== deteledPlaceId));
+    }
 
     return <Fragment>
         <ErrorModal error={error} onClear={clearError} />
         {isLoading && <div className='center'>
             <LoadingSpinner />
         </div>}
-        {!isLoading && loadedPlaces && <PlaceList items={loadedPlaces} />}
+        {!isLoading && loadedPlaces && <PlaceList items={loadedPlaces} onDeletePlace={placeDeteleHandler} />}
     </Fragment>
 
 };

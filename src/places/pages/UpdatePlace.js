@@ -1,53 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { Fragment, useEffect, useState, useContext } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
 import Button from '../../shared/components/FormElements/Button';
 import Input from '../../shared/components/FormElements/Input';
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from '../../shared/util/validators';
 import { useForm } from '../../shared/hooks/form-hook';
+import { useHttpClient } from '../../shared/hooks/http-hook';
 import Card from '../../shared/components/UIElements/Card';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import { AuthContext } from '../../shared/context/auth-context';
 import './PlaceForm.css';
 
-const DUMMY_PLACES = [
-    {
-        id: 'p1',
-        title: 'Airplane Boneyard',
-        description: 'Old Airplanes grave yard.',
-        imageUrl: 'https://twistedsifter.com/wp-content/uploads/2014/02/airplane-boneyard-tucson-arizona-google-earth.jpg',
-        address: 'Tucson, Arizona',
-        location: {
-            lat: 32.1700392,
-            lng: -110.8601235
-        },
-        creator: 'u1'
-    },
-    {
-        id: 'p2',
-        title: 'Mysterious Desert Pattern',
-        description: 'Gigantic unknown pattern on dessert.',
-        imageUrl: 'https://twistedsifter.com/wp-content/uploads/2014/02/crop-circle-egypt-google-earth-strange.jpg',
-        address: 'Red Sea Governorate, Egypt',
-        location: {
-            lat: 27.3804303,
-            lng: 33.6299342
-        },
-        creator: 'u2'
-    },
-    {
-        id: 'p4',
-        title: 'Star Fort',
-        description: 'Its original purpose was to control the only road between Germany and the city of Groningen, which was controlled by the Spaniards during the time of the Eighty Years\' War.',
-        imageUrl: 'https://twistedsifter.com/wp-content/uploads/2014/02/star-fort-google-earth.jpg',
-        address: 'Schansdijk 5, 4655 De Heen, The Netherlands',
-        location: {
-            lat: 53.0067437,
-            lng: 7.1898471
-        },
-        creator: 'u3'
-    },
-];
+
 
 const UpdatePlace = () => {
-    const [isLoading, setIsLoading] = useState(true);
+    const history = useHistory();
+    const { isLoading, error, sendRequest, clearError } = useHttpClient();
+    const [loadedPlace, setLoadedPlace] = useState();
+    const auth = useContext(AuthContext);
+
     const placeId = useParams().placeId;
 
     const [formState, inputHandler, setFormData] = useForm({
@@ -61,33 +32,58 @@ const UpdatePlace = () => {
         }
     }, false);
 
-    const identifiedPlace = DUMMY_PLACES.find(p => p.id === placeId);
-
-
     useEffect(() => {
-        if (identifiedPlace) {
-            setFormData({
-                title: {
-                    value: identifiedPlace.title,
-                    isValid: true
-                },
-                description: {
-                    value: identifiedPlace.description,
-                    isValid: true
-                }
-            }, true);
-        }
-        setIsLoading(false);
-    }, [setFormData, identifiedPlace])
+        const fetchPlace = async () => {
+            try {
+                const responseData = await sendRequest(`http://localhost:5000/api/places/${placeId}`);
+                setLoadedPlace(responseData.place);
+                console.log(responseData);
+                setFormData({
+                    title: {
+                        value: responseData.place.title,
+                        isValid: true
+                    },
+                    description: {
+                        value: responseData.place.description,
+                        isValid: true
+                    }
+                }, true);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        fetchPlace();
+    }, [sendRequest, placeId, setFormData]);
+
 
     // const userId = identifiedPlace.creator;
 
-    const placeUpdateSubmitHandler = (event) => {
+    const placeUpdateSubmitHandler = async (event) => {
         event.preventDefault();
-        console.log(formState.inputs);
+        try {
+            const responseData = await sendRequest(`http://localhost:5000/api/places/${placeId}`, 'PATCH',
+                {
+                    "Content-Type": "application/json"
+                },
+                JSON.stringify({
+                    title: formState.inputs.title.value,
+                    description: formState.inputs.description.value
+                }));
+            console.log(responseData.message);
+            history.push(`/${auth.userId}/places`);
+        } catch (err) {
+            console.log(err);
+        }
+
     }
 
-    if (!identifiedPlace) {
+    if (isLoading) {
+        return <div className="centered">
+            <LoadingSpinner />
+        </div>
+    }
+
+    if (!loadedPlace && !error) {
         return <div className="center">
             <Card>
                 <h2>Could not find place!</h2>
@@ -95,38 +91,37 @@ const UpdatePlace = () => {
         </div>
     }
 
-    if (isLoading) {
-        return <div className="centered">
-            <h2>Loading...</h2>
-        </div>
-    }
 
-    return (<form className="place-form" onSubmit={placeUpdateSubmitHandler}>
-        <Input
-            id="title"
-            element="input"
-            label="Title"
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText="Please enter a valid title"
-            onInput={inputHandler}
-            initialValue={formState.inputs.title.value}
-            initialValid={formState.inputs.title.isValid}
-        />
-        <Input
-            id="description"
-            element="textarea"
-            label="Description"
-            validators={[VALIDATOR_MINLENGTH(5)]}
-            errorText="Please enter a valid description (min. 5 characters)"
-            onInput={inputHandler}
-            initialValue={formState.inputs.description.value}
-            initialValid={formState.inputs.description.isValid}
-        />
-        <div className="place-form__actions">
-            <Button type="submit" disabled={!formState.isValid}>UPDATE PLACE</Button>
-            {/* <Button to={`/${userId}/places`}>Cancel</Button> */}
-        </div>
-    </form>)
+
+    return (<Fragment>
+        <ErrorModal error={error} onClear={clearError} />
+        {!isLoading && loadedPlace && <form className="place-form" onSubmit={placeUpdateSubmitHandler}>
+            <Input
+                id="title"
+                element="input"
+                label="Title"
+                validators={[VALIDATOR_REQUIRE()]}
+                errorText="Please enter a valid title"
+                onInput={inputHandler}
+                initialValue={loadedPlace.title}
+                initialValid={true}
+            />
+            <Input
+                id="description"
+                element="textarea"
+                label="Description"
+                validators={[VALIDATOR_MINLENGTH(6)]}
+                errorText="Please enter a valid description (min. 6 characters)"
+                onInput={inputHandler}
+                initialValue={loadedPlace.description}
+                initialValid={true}
+            />
+            <div className="place-form__actions">
+                <Button type="submit" disabled={!formState.isValid}>UPDATE PLACE</Button>
+                {/* <Button to={`/${userId}/places`}>Cancel</Button> */}
+            </div>
+        </form>}
+    </Fragment>)
 };
 
 export default UpdatePlace;
