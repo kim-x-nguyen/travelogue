@@ -10,7 +10,9 @@ html {
 
 body {
   margin: 0;
-  background: #21ACBC;
+  background: rgb(0,151,255);
+  background: linear-gradient(90deg, rgba(0,151,255,1) 0%, rgba(135,144,22,1) 100%, rgba(2,0,36,1) 100%);
+  
 }
 
 .slide-in-left-enter {

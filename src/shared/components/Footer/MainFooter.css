@@ -1,24 +1,30 @@
-.main-header {
+.main-footer {
     width: 100%;
     height: 4rem;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     display: flex;
     align-items: center;
     position: fixed;
-    top: 0;
+    bottom: 0;
     left: 0;
+    color: rgb(248, 248, 248);
     background: rgb(0,151,255);
     background: linear-gradient(90deg, rgba(0,151,255,1) 0%, rgba(135,144,22,1) 100%, rgba(2,0,36,1) 100%);
+    box-shadow: 0 2px 6px #A2B7CC;
     padding: 0 1rem;
     z-index: 5;
   }
   
   main {
-    margin-top: 5rem;
+    margin-bottom: 5rem;
   }
+
+.main-footer h4 {
+    font-size: 13px;
+}
   
   @media (min-width: 768px) {
-    .main-header {
-      justify-content: space-between;
+    .main-footer {
+      justify-content: space-evenly;
     }
   }

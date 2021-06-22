@@ -68,7 +68,7 @@ const Auth = props => {
                         password: formState.inputs.password.value
                     })
                 );
-                auth.login(responseData.user.id);
+                auth.login(responseData.userId, responseData.token);
             } catch (err) {
                 console.log(err);
             }
@@ -81,7 +81,7 @@ const Auth = props => {
                 formData.append('image', formState.inputs.image.value)
                 const responseData = await sendRequest('http://localhost:5000/api/users/signup', 'POST', {}, formData
                 );
-                auth.login(responseData.user.id);
+                auth.login(responseData.userId, responseData.token);
             } catch (err) {
                 console.log(err);
             }

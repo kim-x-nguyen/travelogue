@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 
 import NewPlaces from './places/pages/NewPlace';
@@ -7,16 +7,16 @@ import UserPlaces from './places/pages/UserPlaces';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
 import UpdatePlace from './places/pages/UpdatePlace';
 import Auth from './user/pages/Auth';
+import MainFooter from './shared/components/Footer/MainFooter';
 import { AuthContext } from './shared/context/auth-context';
-
+import { useAuth } from './shared/hooks/auth-hook';
 
 
 
 function App() {
   const { REACT_APP_API_KEY } = process.env;
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userId, setUserId] = useState(false);
+  const { token, login, logout, userId } = useAuth();
 
   useEffect(() => {
     // Create the script tag, set the appropriate attributes
@@ -32,19 +32,9 @@ function App() {
 
   }, []);
 
-  const login = useCallback(uid => {
-    setIsLoggedIn(true);
-    setUserId(uid);
-  }, []);
-
-  const logout = useCallback(() => {
-    setIsLoggedIn(false);
-    setUserId(null);
-  }, []);
-
   let routes;
 
-  if (isLoggedIn) {
+  if (token) {
     routes = (
       <Switch>
         <Route path="/" exact>
@@ -78,10 +68,11 @@ function App() {
     );
   }
 
-  return (
+  return (<Fragment>
     <AuthContext.Provider value={
       {
-        isLoggedIn: isLoggedIn,
+        isLoggedIn: !!token,
+        token: token,
         userId: userId,
         login: login,
         logout: logout
@@ -94,6 +85,8 @@ function App() {
         </main>
       </Router>
     </AuthContext.Provider>
+    <MainFooter />
+  </Fragment>
   );
 }
 
