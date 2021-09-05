@@ -72,7 +72,7 @@ const PlaceItem = props => {
                     <Button danger onClick={confirmDeleteHandler}>DELETE</Button>
                 </Fragment>
             }>
-            <p>Do you want to proceed and delete this place? Please note that it can't be undone thereafter.</p>
+            <p>Do you want to proceed and delete this place? Please note that it can't be undone there after.</p>
         </Modal>
         <li className="place-item">
             <Card className="place-item__content">

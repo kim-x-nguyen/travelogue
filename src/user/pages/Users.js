@@ -22,7 +22,6 @@ const Users = () => {
         fetchUsers();
     }, [sendRequest]);
 
-
     return <Fragment>
         <ErrorModal error={error} onClear={clearError} />
         {isLoading && (

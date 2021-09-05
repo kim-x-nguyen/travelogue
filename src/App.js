@@ -7,7 +7,6 @@ import UserPlaces from './places/pages/UserPlaces';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
 import UpdatePlace from './places/pages/UpdatePlace';
 import Auth from './user/pages/Auth';
-import MainFooter from './shared/components/Footer/MainFooter';
 import { AuthContext } from './shared/context/auth-context';
 import { useAuth } from './shared/hooks/auth-hook';
 
@@ -85,7 +84,6 @@ function App() {
         </main>
       </Router>
     </AuthContext.Provider>
-    <MainFooter />
   </Fragment>
   );
 }

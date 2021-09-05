@@ -54,11 +54,9 @@ const Auth = props => {
     };
 
     const authSubmitHandler = async event => {
-        event.preventDefault();
-        
+        event.preventDefault();   
         if (isLoginMode) {
             try {
-
                 const responseData = await sendRequest('http://localhost:5000/api/users/login', 'POST',
                     {
                         'Content-Type': 'application/json'
@@ -112,7 +110,7 @@ const Auth = props => {
                     type="input"
                     label="E-mail"
                     validators={[VALIDATOR_EMAIL()]}
-                    errorText="Please enter a valid password."
+                    errorText="Please enter a valid e-mail."
                     onInput={inputHandler}
 
                 />
